@@ -1,0 +1,202 @@
+// Simulate real-time price updates
+function updatePrices() {
+    const priceElements = document.querySelectorAll('.price-display');
+    const changeElements = document.querySelectorAll('.price-change');
+    
+    priceElements.forEach((element, index) => {
+        const currentPrice = parseFloat(element.textContent.replace('$', '').replace(',', ''));
+        const variation = (Math.random() - 0.5) * 0.02; // ±1% variation
+        const newPrice = currentPrice * (1 + variation);
+        
+        element.textContent = '$' + newPrice.toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+        
+        // Update change indicator
+        const changeElement = changeElements[index];
+        const changeValue = newPrice - currentPrice;
+        const changePercent = (changeValue / currentPrice) * 100;
+        
+        if (changeValue > 0) {
+            changeElement.className = 'price-change positive';
+            changeElement.textContent = `+${changePercent.toFixed(1)}% (+$${Math.abs(changeValue).toFixed(0)})`;
+        } else {
+            changeElement.className = 'price-change negative';
+            changeElement.textContent = `-${Math.abs(changePercent).toFixed(1)}% (-$${Math.abs(changeValue).toFixed(0)})`;
+        }
+    });
+}
+
+// Initialize price chart
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: 30}, (_, i) => {
+                const date = new Date();
+                date.setDate(date.getDate() - (29 - i));
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }),
+            datasets: [
+                {
+                    label: 'Lithium Carbonate',
+                    data: Array.from({length: 30}, () => 20000 + Math.random() * 8000),
+                    borderColor: '#06d6a0',
+                    backgroundColor: 'rgba(6, 214, 160, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Cobalt Sulfate',
+                    data: Array.from({length: 30}, () => 12000 + Math.random() * 6000),
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Rare Earth Oxides',
+                    data: Array.from({length: 30}, () => 6000 + Math.random() * 4000),
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#e2e8f0'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#94a3b8'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: '#94a3b8',
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+});
+
+// Update prices every 30 seconds to simulate real-time data
+setInterval(updatePrices, 30000);
+
+// Handle form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get email value
+            const emailInput = form.querySelector('input[type="email"]');
+            const email = emailInput.value;
+            
+            // Simple validation
+            if (email && email.includes('@')) {
+                // Show success message
+                alert('Thank you for subscribing! We\'ll send you market updates soon.');
+                emailInput.value = ''; // Clear the form
+            } else {
+                alert('Please enter a valid email address.');
+            }
+        });
+    }
+});
+
+// Smooth scrolling for navigation
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Simple smooth scroll to top for now
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        
+        console.log('Navigate to:', this.getAttribute('href'));
+    });
+});
+
+// Add some interactivity to cards
+document.querySelectorAll('.card').forEach(card => {
+    // Add click effect to cards
+    card.addEventListener('click', function() {
+        // Add a subtle flash effect when clicked
+        this.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+            this.style.transform = '';
+        }, 150);
+        
+        console.log('Card clicked');
+    });
+});
+
+// Add loading animation when page loads
+window.addEventListener('load', function() {
+    // Fade in cards with stagger effect
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+
+// Add hover effects to price displays
+document.querySelectorAll('.price-display').forEach(priceDisplay => {
+    priceDisplay.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.05)';
+        this.style.transition = 'transform 0.2s ease';
+    });
+    
+    priceDisplay.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+    });
+});
+
+// Console log for debugging
+console.log('CommodityFlow Dashboard loaded successfully!');
+console.log('Features: Real-time price simulation, interactive charts, email signup');
+
+// Add some mobile-friendly touch effects
+if ('ontouchstart' in window) {
+    document.querySelectorAll('.btn').forEach(button => {
+        button.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.95)';
+        });
+        
+        button.addEventListener('touchend', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+}
